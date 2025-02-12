@@ -11,13 +11,6 @@ body {
     text-align: center; 
 }
 
-h1 {
-    margin: 10px;
-    font-family: "Goldman", serif;
-    font-size: 3.5em;
-    color: #0b1026;
-    -webkit-text-stroke: 1px #e9ecef;
-}
 
 .switch {
     background-image: url('./imagenes/switch2sombra.png');
@@ -25,4 +18,11 @@ h1 {
     height: 80%;
     background-size: cover;
     margin-top: 10px;
+}
+
+.frases{
+    font-family: "Pixelify Sans", serif;
+    font-optical-sizing: auto;
+    font-weight: 20px;
+    font-style: normal;
 }
