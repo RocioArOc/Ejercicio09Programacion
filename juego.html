@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/ico" href="imagenes/pokemon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Goldman:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Zen+Dots&display=swap" rel="stylesheet">
+    <title>El Viaje del Héroe</title>
+    <style>
+
+        *{
+            font-family: "Chakra Petch", serif;
+        }
+
+        body{
+            background-color: rgb(203, 169, 226);
+            background: linear-gradient(rgba(203, 169, 226, 0.8), rgba(203, 169, 226, 0.8)), url("imagenes/76cc71fb45866a23a21ba5124743da4e.gif");
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        #areajuego {
+            width: 1000px;
+            height: 700px;
+            border: 2px solid rgb(120, 65, 156);
+            position: relative;
+            overflow: hidden;
+            background-image: url("imagenes/fondo.jpg");
+            background-size: cover;
+            border-radius: 5px;
+            box-shadow: 2px 2px 6px rgb(222, 174, 236);
+        }
+        .character {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+        }
+
+        #opciones {
+            display: none; 
+            border: 2px solid rgb(81, 50, 116);
+            padding: 10px;
+            background-color: rgba(192, 145, 223, 0.5);
+            width: 200px;
+            margin-top: 20px;
+            position: absolute;
+            top: 90px;
+            right: 10px;
+            z-index: 10;
+            border-radius: 8px;
+        }
+
+        #audio {
+            margin-top: 10px;
+        }
+
+        #botonaudio {
+            border: none;
+            background: none;
+            cursor: pointer;
+            border: 1px solid black;
+            padding: 5px;
+            border-radius: 8px;
+            font-size: medium;
+            color: rgb(37, 7, 54);
+        }
+
+        #botonaudio:hover {
+            background-color: rgba(174, 122, 209, 0.5);
+        }
+
+        #boton-opciones {
+            position: absolute;   
+            top: 10px;            
+            right: 10px;         
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        #logo{
+            position: absolute; 
+            top: 10px;          
+            left: 42%;         
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        #botonpj {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background-color: rgba(192, 145, 223, 0.5);
+            color: rgb(37, 7, 54);
+            border: 1px solid rgb(75, 29, 102);
+            font-size: medium;
+        }
+
+        #botonpj:hover {
+            background-color: rgba(174, 122, 209, 0.5);
+            color: white;
+        }
+
+        #aviso {
+            color: rgb(53, 24, 99);
+            font-size: 20px;
+        }
+
+        #contenedorjuego {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px; 
+            justify-content: center;
+            margin-left: 8%;
+        }
+        .frasesPj{
+            background-color: rgba(174, 243, 228, 0.9);
+            width: 230px;
+            border-radius: 20px;
+            padding: 5px;
+            position: relative;
+        }
+
+    </style>
+</head>
+<body>
+    <audio id="audio" src="imagenes/audio.mp3" preload="none" loop></audio>
+    <div id="logo"><img src="imagenes/logo.png" width="300" height="100"></div><br><br>
+    <button id="boton-opciones" onclick="mostrarOpciones()"><img src="imagenes/ajustes.png" width="70" height="70"></button><br><br>
+    <div id="opciones">
+        <h3>Opciones:</h3>
+        <button id="botonaudio" onclick="activarAudio()">Activar Audio</button><br><br>
+        <button id="botonaudio"  onclick="desactivarAudio()">Desactivar Audio</button>
+    </div>
+    <div id="aviso"></div><br>
+    <div id="contenedorjuego">
+    <div id="areajuego"></div><br><br>
+    <button id="botonpj" onclick="agregarPersonaje()">Agregar personaje</button>
+    </div>
+    
+    
+    <script type="text/javascript">
+        var personajes = [];  // Array para guardar los personajes
+        var distancia = 10;  // Distancia del movimiento
+        var anchoPantalla = 1000;  // Ancho de la pantalla
+        var altoPantalla = 700;  // Alto de la pantalla
+        var personajeActual = null;  // Indica qué personaje se está moviendo
+        var contador = 0;  // Contador para los personajes
+
+        // Imágenes de las direcciones para los personajes
+        var imagenesDerecha = ["imagenes/personaje1Derecha.gif", "imagenes/personaje2Derecha.gif", "imagenes/personaje3Derecha.gif", "imagenes/personaje4Derecha.gif", "imagenes/personaje5Derecha.gif", "imagenes/personaje6Derecha.gif"];
+        var imagenesIzquierda = ["imagenes/personaje1Izquierda.gif", "imagenes/personaje2Izquierda.gif", "imagenes/personaje3Izquierda.gif", "imagenes/personaje4Izquierda.gif", "imagenes/personaje5Izquierda.gif", "imagenes/personaje6Izquierda.gif"];
+        var imagenesArriba = ["imagenes/personaje1Arriba.gif", "imagenes/personaje2Arriba.gif", "imagenes/personaje3Arriba.gif", "imagenes/personaje4Arriba.gif", "imagenes/personaje5Arriba.gif", "imagenes/personaje6Arriba.gif"];
+        var imagenesAbajo = ["imagenes/personaje1Abajo.gif", "imagenes/personaje2Abajo.gif", "imagenes/personaje3Abajo.gif", "imagenes/personaje4Abajo.gif", "imagenes/personaje5Abajo.gif", "imagenes/personaje6Abajo.gif"];
+
+        // Función para crear un nuevo personaje
+        function agregarPersonaje() {
+            if (personajes.length >= 6) {
+                document.getElementById("aviso").innerHTML = "¡Ya no puedes agregar más personajes!";
+                return;
+            }
+
+            var areaJuego = document.getElementById("areajuego");
+            var posicion = obtenerPosicionAleatoria();
+            
+            contador++;
+
+            // Crear un nuevo personaje con imagen inicial de frente
+            var nuevoPersonajeHTML = '<img id="personaje' + contador + '" class="character" src="' + imagenesAbajo[contador - 1] + '" style="left: ' + posicion.x + 'px; top: ' + posicion.y + 'px;" onclick="seleccionarPersonaje(this)">';
+            var contenedorFrase = '<div class="frasesPj" id="dialogo'+ contador +'" style="display: none; left: ' + posicion.x + 'px; top: ' + (posicion.y - 35) + 'px;"></div>';
+
+            areaJuego.innerHTML += nuevoPersonajeHTML; // Agregar el personaje usando innerHTML
+            areaJuego.innerHTML += contenedorFrase;
+
+            // Agregar a la lista de personajes
+            var nuevoPersonaje = document.getElementById("personaje" + contador);
+            personajes.push(nuevoPersonaje);
+
+            // Agregar frases aleatorias al personaje
+            frasesPersonajes[contador] = frases.slice();  // Hacer una copia de las frases
+            frasesUsadas[contador] = [];
+            
+            seleccionarPersonaje(nuevoPersonaje);  // Seleccionar el personaje recién creado
+
+        }
+
+        // Función para seleccionar un personaje
+        function seleccionarPersonaje(personaje) {
+            var idPersonaje = personaje.id.replace("personaje", "");
+
+            // Si se selecciona un personaje distinto, restaurar las frases de todos
+            if (personajeActual !== personaje) {
+                restaurarFrasesTodos();
+            }
+
+            personajeActual = personaje;  // Cambiar el personaje actual
+            dialogoPersonajes(personaje);  // Mostrar el mensaje del personaje
+
+        }
+
+        // Funciones de movimiento y cambio de imagen
+        function moverDerecha(personaje) {
+            var posX = parseInt(personaje.style.left);
+            if (posX + distancia <= anchoPantalla - 50) {
+                personaje.style.left = posX + distancia + "px";
+                cambiarImagen(personaje, 'derecha');
+                actualizarPosicionDialogo(personaje);
+            }
+
+        }
+
+        function moverIzquierda(personaje) {
+            var posX = parseInt(personaje.style.left);
+            if (posX - distancia >= 0) {
+                personaje.style.left = posX - distancia + "px";
+                cambiarImagen(personaje, 'izquierda');
+                actualizarPosicionDialogo(personaje);
+            }
+        }
+
+        function moverArriba(personaje) {
+            var posY = parseInt(personaje.style.top);
+            if (posY - distancia >= 0) {
+                personaje.style.top = posY - distancia + "px";
+                cambiarImagen(personaje, 'arriba');
+                actualizarPosicionDialogo(personaje);
+            }
+        }
+
+        function moverAbajo(personaje) {
+            var posY = parseInt(personaje.style.top);
+            if (posY + distancia <= altoPantalla - 50) {
+                personaje.style.top = posY + distancia + "px";
+                cambiarImagen(personaje, 'abajo');
+                actualizarPosicionDialogo(personaje);
+            }
+        }
+
+        // Cambiar la imagen del personaje según la dirección
+        function cambiarImagen(personaje, direccion) {
+            var numeroPersonaje = parseInt(personaje.id.replace("personaje", "")) - 1; // Extraer el número del personaje
+
+            if (direccion == 'derecha') {
+                personaje.src = imagenesDerecha[numeroPersonaje];
+            } else if (direccion == 'izquierda') {
+                personaje.src = imagenesIzquierda[numeroPersonaje];
+            } else if (direccion == 'arriba') {
+                personaje.src = imagenesArriba[numeroPersonaje];
+            } else if (direccion == 'abajo') {
+                personaje.src = imagenesAbajo[numeroPersonaje];
+            }
+        }
+
+        // Función que se ejecuta cuando se presiona una tecla
+        function pulsaTecla(evento) {
+            // Si no hay personaje actual seleccionado, no hacer nada
+            if (!personajeActual) return;
+
+            switch (evento.keyCode) {
+                case 37: // Izquierda
+                    moverIzquierda(personajeActual);
+                    break;
+                case 38: // Arriba
+                    moverArriba(personajeActual);
+                    break;
+                case 39: // Derecha
+                    moverDerecha(personajeActual);
+                    break;
+                case 40: // Abajo
+                    moverAbajo(personajeActual);
+                    break;
+            }
+        }
+
+        // Función que se ejecuta cuando se suelta una tecla
+        function sueltaTecla(evento) {
+            // Aquí no necesitas nada en este caso
+        }
+
+        // Función para obtener una posición aleatoria que no se solape con otros personajes
+        function obtenerPosicionAleatoria() {
+            var posicionX, posicionY;
+            var solapado;
+            var intentos = 0;
+            var maxIntentos = 5;
+
+            // Intentamos obtener una posición aleatoria válida
+            for (var intentos = 0; intentos < maxIntentos; intentos++) { 
+                solapado = false;
+                posicionX = Math.floor(Math.random() * (anchoPantalla - 50));  // 50 es el tamaño del personaje
+                posicionY = Math.floor(Math.random() * (altoPantalla - 50));  // 50 es el tamaño del personaje
+
+                // Verificar que no haya solapamiento con otros personajes
+                for (var i = 0; i < personajes.length; i++) {
+                var p = personajes[i];
+                var pX = parseInt(p.style.left); // Posición X de un personaje existente
+                var pY = parseInt(p.style.top);
+
+                // Si hay solapamiento, marca solapado como true
+                if ((pX <= posicionX + 50 && pX + 50 >= posicionX) && (pY <= posicionY + 50 && pY + 50 >= posicionY)) {
+                        solapado = true;
+                        break; // Salimos del bucle
+                    }
+                }
+
+                if (!solapado) {
+                    return { x: posicionX, y: posicionY }; // Retornar la posición si no hay solapamiento
+                }
+            }
+                    document.getElementById("aviso").innerHTML = "No se pudo encontrar una posición válida para el personaje.";
+                    return null; // Retornar null si no se encuentra una posición válida
+        }
+
+        function mostrarOpciones() {
+            var opciones = document.getElementById("opciones");
+            if (opciones.style.display == "none" || opciones.style.display == "") {
+                opciones.style.display = "block";
+            } else {
+                opciones.style.display = "none";
+            }
+        }
+
+        function activarAudio() {
+            var audio = document.getElementById("audio");
+            audio.play(); 
+        }
+
+        function desactivarAudio() {
+            var audio = document.getElementById("audio");
+            audio.pause();
+        }
+
+        // Asignar eventos de teclas
+        document.onkeyup = sueltaTecla;
+        document.onkeydown = pulsaTecla;
+        
+        var frasesPersonajes = {};
+        var frases = ["Confía en tí mismo","Los Pokémon son increíbles…","¿Qué miras?","Siempre me levantaré más fuerte","¡Vamos con todo!","Tú y tu equipo tienen potencial","¡Nunca me subestimes!","¿Quieres una pelea seria?","Los combates son geniales","No tengo miedo de perder…","No pienso detenerme","Este viaje apenas comienza","¡No te confíes demasiado!","¡Esta es la prueba final!", "¡Demuestra lo que vales!","¡No importa si es difícil!","Aún guardo sorpresas", "El nos espera tremenda aventura","Estoy cansaditto","Cada batalla es una lección."];
+        //var frasesUsadas = []
+
+        // Función que muestra el diálogo del personaje
+        function dialogoPersonajes(personaje) {
+            ocultarDialogos();  // Ocultar otros diálogos
+
+            var idPersonaje = personaje.id.replace("personaje", "");  // Obtener el id del personaje
+            var mensaje = document.getElementById("dialogo" + idPersonaje);  // Obtener el contenedor de la frase
+
+            // Verificar si las frases del personaje están agotadas
+            if (frasesPersonajes[idPersonaje].length == 0) {
+                // Si ya no hay frases, mostrar mensaje de agotamiento
+                mensaje.innerHTML = "Ya no tengo más que decir.";
+            } else {
+                // Si hay frases disponibles, elegir una aleatoria
+                var fraseIndex = Math.floor(Math.random() * frasesPersonajes[idPersonaje].length);
+                var fraseDicha = frasesPersonajes[idPersonaje].splice(fraseIndex, 1)[0];  // Tomar una frase aleatoria y eliminarla
+
+                mensaje.innerHTML = fraseDicha;
+            }
+
+            mensaje.style.display = "block";  // Mostrar el mensaje
+        }
+
+        // Función que oculta todos los diálogos (frases)
+        function ocultarDialogos() {
+            var dialogos = document.getElementsByClassName("frasesPj");
+            for (var i = 0; i < dialogos.length; i++) {
+                dialogos[i].style.display = "none";
+            }
+        }
+
+        // Función para restaurar frases de todos los personajes
+        function restaurarFrasesTodos() {
+            for (var id in frasesPersonajes) {
+                frasesPersonajes[id] = frases.slice();  // Se restablecen todas las frases
+            }
+        }   
+
+        // Función que actualiza la posición del bocadillo (diálogo)
+        function actualizarPosicionDialogo(personaje) {
+            var idPersonaje = personaje.id.replace("personaje", "");
+            var mensaje = document.getElementById("dialogo" + idPersonaje);
+            
+            // Actualizar la posición del bocadillo para que siga al personaje
+            var posX = parseInt(personaje.style.left);
+            var posY = parseInt(personaje.style.top);
+
+            // Colocar el bocadillo justo arriba del personaje
+            mensaje.style.left = posX + "px";
+            mensaje.style.top = (posY - 35) + "px";  // Ajusta la distancia que prefieras
+        }
+
+    </script>
+</body>
+</html>

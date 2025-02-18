@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="imagenes/pokemon.ico">
+    <title>Inicio</title>
+    <style>
+
+        body{
+            background-image: url("imagenes/fondogif.gif");
+            background-size: cover;
+        }
+
+        #contenedor {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .button {
+            --main-color: rgb(251, 198, 255);
+            --main-bg-color: rgba(221, 183, 229, 0.36);
+            --pattern-color: rgba(46, 213, 116, 0.073);
+
+            filter: hue-rotate(0deg);
+
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+            background: radial-gradient(
+                circle,
+                var(--main-bg-color) 0%,
+                rgba(0, 0, 0, 0) 95%
+                ),
+                linear-gradient(var(--pattern-color) 1px, transparent 1px),
+                linear-gradient(to right, var(--pattern-color) 1px, transparent 1px);
+            background-size:
+                cover,
+                15px 15px,
+                15px 15px;
+            background-position:
+                center center,
+                center center,
+                center center;
+            border-image: radial-gradient(
+                circle,
+                var(--main-color) 0%,
+                rgba(0, 0, 0, 0) 100%
+                )
+                1;
+            border-width: 1px 0 1px 0;
+            color: var(--main-color);
+            padding: 1rem 3rem;
+            font-weight: 700;
+            font-size: 6rem;
+            transition: background-size 0.2s ease-in-out;
+        }
+
+        .button:hover {
+            background-size:
+                cover,
+                10px 10px,
+                10px 10px;
+
+            --main-color: rgb(219, 139, 224);
+            --main-bg-color: rgba(221, 183, 229, 0.36);
+            --pattern-color: rgba(46, 213, 116, 0.073);
+        }
+
+        .button:active {
+            filter: hue-rotate(250deg);
+        }
+
+    </style>
+</head>
+<body></body>
+    <div id="contenedor">
+    <a href="juego.html"><button class="button">Start</button></a>
+    </div>
+</body>
+</html>
